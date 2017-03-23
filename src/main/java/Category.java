@@ -41,4 +41,12 @@ public class Category {
   public void addTask(Task task) {
   mTasks.add(task);
   }
+
+  public static Category find(int id) {
+  try {
+    return instances.get(id - 1);
+  } catch (IndexOutOfBoundsException exception) {
+    return null;
+  }
+}
 }
