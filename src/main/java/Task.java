@@ -6,6 +6,6 @@ public class Task {
   }
 
   public String getDescription() {
-    return "";
+    return mDescription;
   }
 }
