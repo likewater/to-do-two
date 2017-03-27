@@ -14,7 +14,8 @@ public class Category {
       return false;
     } else {
       Category newCategory = (Category) otherCategory;
-      return this.getName().equals(newCategory.getName());
+      return this.getName().equals(newCategory.getName()) &&
+             this.getId() == newCategory.getId();
     }
   }
 
@@ -58,19 +59,22 @@ public class Category {
   // }
 
   public static Category find(int id) {
-  // try {
-  //   return instances.get(id - 1);
-  // } catch (IndexOutOfBoundsException exception) {
-  //   return null;
-  // }
-  }
+    try(Connection con = DB.sql2o.open()) {
+      String sql = "SELECT * FROM categories where id=:id";
+      Category category = con.createQuery(sql)
+        .addParameter("id", id)
+        .executeAndFetchFirst(Category.class);
+      return category;
+    }
+  } 
 
   public void save() {
     try(Connection con = DB.sql2o.open()) {
-      String sql = "INSERT INTO categories (name) VALUES (:name)";
-      con.createQuery(sql)
+      String sql = "INSERT INTO categories(name) VALUES (:name)";
+      this.id = (int) con.createQuery(sql, true)
         .addParameter("name", this.name)
-        .executeUpdate();
+        .executeUpdate()
+        .getKey();
     }
   }
 }

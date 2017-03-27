@@ -34,9 +34,11 @@ public class CategoryTest {
   @Test
   public void all_returnsAllInstancesOfCategory_true() {
     Category firstCategory = new Category("Home");
+    firstCategory.save();
     Category secondCategory = new Category("Work");
-    assertEquals(true, Category.all().contains(firstCategory));
-    assertEquals(true, Category.all().contains(secondCategory));
+    secondCategory.save();
+    assertEquals(true, Category.all().get(0).equals(firstCategory));
+    assertEquals(true, Category.all().get(1).equals(secondCategory));
   }
 
   @Test
@@ -47,16 +49,18 @@ public class CategoryTest {
   }
 
   @Test
-  public void getId_categoriesInstantiateWithAnId_1() {
+   public void getId_categoriesInstantiateWithAnId_1() {
     Category testCategory = new Category("Home");
-    assertEquals(1, testCategory.getId());
-  }
+    testCategory.save();
+    assertTrue(testCategory.getId() > 0);
+ }
 
-  @Test
+ @Test
   public void find_returnsCategoryWithSameId_secondCategory() {
-    Category.clear();
     Category firstCategory = new Category("Home");
+    firstCategory.save();
     Category secondCategory = new Category("Work");
+    secondCategory.save();
     assertEquals(Category.find(secondCategory.getId()), secondCategory);
   }
 
@@ -92,5 +96,13 @@ public class CategoryTest {
     Category myCategory = new Category("Household chores");
     myCategory.save();
     assertTrue(Category.all().get(0).equals(myCategory));
+  }
+
+  @Test
+  public void save_assignsIdToObject() {
+    Category myCategory = new Category("Household chores");
+    myCategory.save();
+    Category savedCategory = Category.all().get(0);
+    assertEquals(myCategory.getId(), savedCategory.getId());
   }
 }
