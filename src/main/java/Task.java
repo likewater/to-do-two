@@ -50,25 +50,33 @@ public class Task {
   }
 
   public static Task find(int id) {
-  //return instances.get(id - 1);
+    try(Connection con = DB.sql2o.open()) {
+      String sql = "SELECT * FROM tasks where id=:id";
+      Task task = con.createQuery(sql)
+        .addParameter("id", id)
+        .executeAndFetchFirst(Task.class);
+      return task;
+    }
   }
 
   public void save() {
-   try(Connection con = DB.sql2o.open()) {
-      String sql = "INSERT INTO tasks (description) VALUES (:description)";
-      con.createQuery(sql)
+    try(Connection con = DB.sql2o.open()) {
+      String sql = "INSERT INTO tasks(description) VALUES (:description)";
+      this.id = (int) con.createQuery(sql, true)
         .addParameter("description", this.description)
-        .executeUpdate();
+        .executeUpdate()
+        .getKey();
     }
   }
 
   @Override
-  public boolean equals(Object otherTask) {
+  public boolean equals(Object otherTask){
     if (!(otherTask instanceof Task)) {
       return false;
     } else {
       Task newTask = (Task) otherTask;
-      return this.getDescription().equals(newTask.getDescription());
+      return this.getDescription().equals(newTask.getDescription()) &&
+             this.getId() == newTask.getId();
     }
   }
 
