@@ -53,6 +53,15 @@ public class Task {
   //return instances.get(id - 1);
   }
 
+  public void save() {
+   try(Connection con = DB.sql2o.open()) {
+      String sql = "INSERT INTO tasks (description) VALUES (:description)";
+      con.createQuery(sql)
+        .addParameter("description", this.description)
+        .executeUpdate();
+    }
+  }
+
   @Override
   public boolean equals(Object otherTask) {
     if (!(otherTask instanceof Task)) {
