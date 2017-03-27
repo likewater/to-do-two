@@ -51,7 +51,12 @@ public class Category {
   // }
 
   public List<Task> getTasks() {
-    //return mTasks;
+    try(Connection con = DB.sql2o.open()) {
+      String sql = "SELECT * FROM tasks where categoryId=:id";
+      return con.createQuery(sql)
+        .addParameter("id", this.id)
+        .executeAndFetch(Task.class);
+    }
   }
 
   // public void addTask(Task task) {
@@ -66,7 +71,7 @@ public class Category {
         .executeAndFetchFirst(Category.class);
       return category;
     }
-  } 
+  }
 
   public void save() {
     try(Connection con = DB.sql2o.open()) {
